@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public enum CellState
 {
-    Cross, 
+    Cross,
     Circle,
     Empty,
 }
@@ -18,22 +18,48 @@ public class Cell : MonoBehaviour, IPointerClickHandler
     [SerializeField] private Sprite circlePrefab;
 
     private Image cellImage;
+    private BoardManager boardManager;
 
     private void Start()
     {
         cellImage = this.GetComponent<Image>();
     }
 
-    public void Init(int x, int y)
+    public void Init(int x, int y, BoardManager boardManager)
     {
         this.x = x;
         this.y = y;
         state = CellState.Empty;
+        this.boardManager = boardManager;
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log("Click on cell");
-        cellImage.sprite = crossPrefab;
+        boardManager.OnCellClicked(x, y);
+    }
+
+    public void SetState(CellState newState)
+    {
+        state = newState;
+        switch (state)
+        {
+            case CellState.Cross:
+                cellImage.sprite = crossPrefab;
+                break;
+            case CellState.Circle:
+                cellImage.sprite = circlePrefab;
+                break;
+
+        }
+    }
+
+    public CellState GetState()
+    {
+        return state;
+    }
+
+    public bool IsEmpty()
+    {
+        return state == CellState.Empty;
     }
 }
