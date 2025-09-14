@@ -20,6 +20,7 @@ public class BoardManager : MonoBehaviour
 
     private CellState currentState = CellState.Cross;
     public bool isPausedGame = false;
+    public bool isGameOver = false;
 
     private void Awake()
     {
@@ -55,18 +56,18 @@ public class BoardManager : MonoBehaviour
 
     public void OnCellClicked(int x, int y)
     {
-        if (isPausedGame) return;
+        if (isPausedGame || isGameOver) return;
 
         Cell cell = cells[x, y];
         if (!cell.IsEmpty()) return;
 
         cell.SetState(currentState);
-        Debug.Log(x + " " + y);
+        SoundManager.Instance.PlaySound(SoundManager.Instance.click);
 
         // Check win here
         if (CheckWin(x, y, currentState))
         {
-            PauseUI.Instance.OpenPausePanel();
+            isGameOver = true;
         }
 
 
@@ -94,6 +95,7 @@ public class BoardManager : MonoBehaviour
 
             if (count >= 5)
             {
+                SoundManager.Instance.PlaySound(SoundManager.Instance.win);
                 DrawLine(start, end);
                 return true;
             }
